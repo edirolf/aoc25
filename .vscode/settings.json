@@ -1,0 +1,14 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "ms-vscode.vscode-typescript-next",
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.format.enable": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "ms-vscode.vscode-typescript-next",
+    "editor.formatOnSave": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "ms-vscode.vscode-typescript-next",
+    "editor.formatOnSave": true
+  }
+}
