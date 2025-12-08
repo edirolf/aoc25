@@ -53,7 +53,7 @@ class TypeScriptRunner {
             console.log(`🚀 Running TypeScript file: ${absolutePath}`);
             console.log('─'.repeat(50));
             // Execute the TypeScript file using ts-node
-            const { stdout, stderr } = await execAsync(`npx ts-node "${absolutePath}"`);
+            const { stdout, stderr } = await execAsync(`npx --stack-size=4000 ts-node  "${absolutePath}"`);
             if (stdout) {
                 console.log(stdout);
             }

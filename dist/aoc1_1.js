@@ -28,38 +28,43 @@ const startingPos = 50;
 let zeroCount = 0;
 let totalZeroPasses = 0;
 let currPos = startingPos;
-const lines = openFile("input.txt").split("\n");
+let lines = openFile("input.txt").split("\n");
+console.log(85 % 100);
 console.log('Starting Position:', currPos);
-lines.forEach(line => {
+// lines = ['R1000'];
+// lines..forEach(line=>{
+for (let l = 0; l < lines.length; l++) {
+    let line = lines[l];
+    console.log('\nProcessing line:', line);
     const distance = processLine(line);
     if (distance.direction === "R") {
         currPos += distance.distance;
-        console.log('currPos after move:', currPos);
+        // console.log('currPos after move:', currPos);
         const zeroPsss = Math.floor(currPos / 100);
-        // console.log('zero passes this move:', zeroPsss);
+        //  console.log('zero passes this move:', zeroPsss);
         totalZeroPasses += zeroPsss;
         currPos = currPos % 100;
     }
     else {
         currPos -= distance.distance;
-        const zeroPsss = Math.floor(Math.abs(currPos) / 100);
-        totalZeroPasses += zeroPsss === 0 ? 1 : zeroPsss;
-        // console.log('zero passes this move:', zeroPsss);
-        currPos = currPos % 100;
         if (currPos < 0) {
+            let zeroPsss = Math.floor(Math.abs(currPos) / 100) + 1;
+            totalZeroPasses += zeroPsss;
+            console.log('zero passes this move:', zeroPsss);
+            currPos = currPos % 100;
             currPos = 100 + currPos;
         }
     }
     console.log('total zero passes:', totalZeroPasses);
     if (currPos === 0) {
         zeroCount += 1;
-        totalZeroPasses -= 1;
+        //   totalZeroPasses -= 1;
         console.log(`Dial rotated to ${currPos}. ✨`);
     }
     else {
         console.log('Dial rotated to:', currPos);
     }
-});
+}
 console.log(`Total 0 exact positions: ${zeroCount}. 🔓`);
 console.log('total zero passes:', totalZeroPasses);
 //# sourceMappingURL=aoc1_1.js.map
