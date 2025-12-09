@@ -1,9 +1,6 @@
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
 import { promises as fs } from 'fs';
-import { promisify } from 'util';
 import * as path from 'path';
-
-const execAsync = promisify(exec);
 
 class TypeScriptRunner {
     /**
@@ -21,16 +18,25 @@ class TypeScriptRunner {
             console.log(`🚀 Running TypeScript file: ${absolutePath}`);
             console.log('─'.repeat(50));
             
-            // Execute the TypeScript file using ts-node
-            const { stdout, stderr } = await execAsync(`npx --stack-size=4000 ts-node  "${absolutePath}"`);
-            
-            if (stdout) {
-                console.log(stdout);
-            }
-            
-            if (stderr) {
-                console.error('Error output:', stderr);
-            }
+            // Use spawn instead of exec to handle large outputs without buffer limits
+            await new Promise<void>((resolve, reject) => {
+                const child = spawn('npx', ['ts-node', absolutePath], {
+                    stdio: 'inherit',  // Stream output directly to console
+                    shell: true
+                });
+
+                child.on('close', (code) => {
+                    if (code === 0) {
+                        resolve();
+                    } else {
+                        reject(new Error(`Process exited with code ${code}`));
+                    }
+                });
+
+                child.on('error', (error) => {
+                    reject(error);
+                });
+            });
             
             console.log('─'.repeat(50));
             console.log('✅ Execution completed');

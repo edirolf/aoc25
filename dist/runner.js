@@ -36,9 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TypeScriptRunner = void 0;
 const child_process_1 = require("child_process");
 const fs_1 = require("fs");
-const util_1 = require("util");
 const path = __importStar(require("path"));
-const execAsync = (0, util_1.promisify)(child_process_1.exec);
 class TypeScriptRunner {
     /**
      * Runs a TypeScript file dynamically using ts-node
@@ -52,14 +50,24 @@ class TypeScriptRunner {
             const absolutePath = path.resolve(filePath);
             console.log(`🚀 Running TypeScript file: ${absolutePath}`);
             console.log('─'.repeat(50));
-            // Execute the TypeScript file using ts-node
-            const { stdout, stderr } = await execAsync(`npx --stack-size=4000 ts-node  "${absolutePath}"`);
-            if (stdout) {
-                console.log(stdout);
-            }
-            if (stderr) {
-                console.error('Error output:', stderr);
-            }
+            // Use spawn instead of exec to handle large outputs without buffer limits
+            await new Promise((resolve, reject) => {
+                const child = (0, child_process_1.spawn)('npx', ['ts-node', absolutePath], {
+                    stdio: 'inherit', // Stream output directly to console
+                    shell: true
+                });
+                child.on('close', (code) => {
+                    if (code === 0) {
+                        resolve();
+                    }
+                    else {
+                        reject(new Error(`Process exited with code ${code}`));
+                    }
+                });
+                child.on('error', (error) => {
+                    reject(error);
+                });
+            });
             console.log('─'.repeat(50));
             console.log('✅ Execution completed');
         }
